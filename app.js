@@ -9,6 +9,8 @@ const shopRoutes = require('./routes/shop');
 
 // Parse incoming text from forms
 app.use(bodyParser.urlencoded({ extended: false }));
+// making public directory accesible for static fils like css, images, etc.
+app.use(express.static(path.join(__dirname, 'public')));
 
 // /admin is the path filtering, so every route in adminRouter, starts with /admin/...
 app.use('/admin', adminRoutes);
