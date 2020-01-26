@@ -3,7 +3,7 @@ const express = require('express');
 // Importing body-parser, for parse incoming text from form fields
 const bodyParser = require('body-parser');
 // Handlebars is not like pug; It should be imported
-const expressHBS = require('express-handlebars');
+// const expressHBS = require('express-handlebars');
 //  Importing path to help give the path
 //  Because Nodejs counts path from root dir of pc not the project
 const path = require('path');
@@ -17,8 +17,12 @@ const app = express();
 // Usings handlebars view engine, and telling it to look for views in views directory
 // hbs will be view extension
 // app.engine('hbs', expressHBS());
-app.engine("hbs", expressHBS({ layoutsDir: "views/layouts/", defaultLayout: "main-layout", extname: "hbs" }));
-app.set('view engine', 'hbs');
+// app.engine("hbs", expressHBS({ layoutsDir: "views/layouts/", defaultLayout: "main-layout", extname: "hbs" }));
+// app.set('view engine', 'hbs');
+// app.set('views', 'views');
+
+// Usings EJS view engine, and telling it to look for views in views directory
+app.set('view engine', 'ejs');
 app.set('views', 'views');
 
 // Importing routing files: admin.js and shop.js
