@@ -17,7 +17,7 @@ const app = express();
 // Usings handlebars view engine, and telling it to look for views in views directory
 // hbs will be view extension
 // app.engine('hbs', expressHBS());
-app.engine("hbs", expressHBS({ defaultLayout: false, layoutsDir: "views/layouts/" }));
+app.engine("hbs", expressHBS({ layoutsDir: "views/layouts/", defaultLayout: "main-layout", extname: "hbs" }));
 app.set('view engine', 'hbs');
 app.set('views', 'views');
 

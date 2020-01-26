@@ -15,7 +15,13 @@ const products = [];
 router.get('/add-product', (req, res, next) => {
     // rendering the view and send page title
     // " path: '/admin/add-product' " is for cheking and set active class to menu item
-    res.render('add-product', { pageTitle: 'Add Product', path: '/admin/add-product' });
+    res.render('add-product', {
+        pageTitle: 'Add Product',
+        path: '/admin/add-product',
+        productCSS: true,
+        formCSS: true,
+        activeShop: true
+    });
 });
 
 // /admin/add-product => POST

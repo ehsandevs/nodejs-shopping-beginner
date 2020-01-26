@@ -12,7 +12,14 @@ const router = express.Router();
 router.get('/', (req, res, next) => {
     // rendering the view and send products array and page title
     // " path: '/' " is for cheking and set active class to menu item 
-    res.render('shop', { prods: adminData.products, pageTitle: 'Shopping', path: '/', hasProducts: adminData.products.length > 0 });
+    res.render('shop', {
+        prods: adminData.products,
+        pageTitle: 'Shopping',
+        path: '/',
+        hasProducts: adminData.products.length > 0,
+        productCSS: true,
+        activeAddProduct: true
+    });
 });
 
 // Export Statements (router)
