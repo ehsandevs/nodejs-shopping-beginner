@@ -19,15 +19,16 @@ exports.postAddProduct = (req, res, next) => {
 };
 
 exports.getProducts = (req, res, next) => {
-    const products = Product.fetchAll();
-    // rendering the view and send products array and page title
-    // " path: '/' " is for cheking and set active class to menu item 
-    res.render('shop', {
-        prods: products,
-        pageTitle: 'Shop',
-        path: '/',
-        hasProducts: products.length > 0,
-        productCSS: true,
-        activeAddProduct: true
+    Product.fetchAll((products) => {
+        // rendering the view and send products array and page title
+        // " path: '/' " is for cheking and set active class to menu item 
+        res.render('shop', {
+            prods: products,
+            pageTitle: 'Shop',
+            path: '/',
+            hasProducts: products.length > 0,
+            productCSS: true,
+            activeAddProduct: true
+        });
     });
 };
