@@ -13,8 +13,10 @@ app.set('view engine', 'ejs');
 app.set('views', 'views');
 
 // Importing routing files: admin.js and shop.js
-const adminData = require('./routes/admin');
+const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
+
+const errorController = require('./controllers/error');
 
 // Parse incoming text from forms
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -22,13 +24,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // /admin is the path filtering, so every route in adminRouter, starts with /admin/...
-app.use('/admin', adminData.routes);
+app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 
 // middleware for wrong address
-app.use((req, res, next) => {
-    res.status(404).render('404', { pageTitle: 'Page Not Found', path: '' });
-});
+app.use(errorController.get404);
 
 // for running server on localhost:3000
 app.listen(3000);
