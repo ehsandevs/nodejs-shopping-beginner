@@ -1,5 +1,4 @@
-// keep added products from form text field
-const products = [];
+const Product = require('../models/product');
 
 exports.getAddProduct = (req, res, next) => {
     // rendering the view and send page title
@@ -14,12 +13,13 @@ exports.getAddProduct = (req, res, next) => {
 };
 
 exports.postAddProduct = (req, res, next) => {
-    // add inputed text in form text field, to array
-    products.push({ title: req.body.title });
+    const product = new Product(req.body.title);
+    product.save();
     res.redirect('/');
 };
 
 exports.getProducts = (req, res, next) => {
+    const products = Product.fetchAll();
     // rendering the view and send products array and page title
     // " path: '/' " is for cheking and set active class to menu item 
     res.render('shop', {
