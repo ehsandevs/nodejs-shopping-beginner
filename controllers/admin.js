@@ -22,13 +22,10 @@ exports.getProducts = (req, res, next) => {
     Product.fetchAll((products) => {
         // rendering the view and send products array and page title
         // " path: '/' " is for cheking and set active class to menu item 
-        res.render('shop/product-list', {
+        res.render('admin/products', {
             prods: products,
-            pageTitle: 'Shop',
-            path: '/',
-            hasProducts: products.length > 0,
-            productCSS: true,
-            activeAddProduct: true
+            pageTitle: 'Admin Products',
+            path: '/admin/products'
         });
     });
-};
+}
