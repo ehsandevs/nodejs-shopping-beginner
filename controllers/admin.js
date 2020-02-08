@@ -42,6 +42,10 @@ exports.getEditProduct = (req, res, next) => {
     });
 };
 
+exports.postEditProduct = (req, res, next) => {
+
+}
+
 exports.getProducts = (req, res, next) => {
     Product.fetchAll((products) => {
         // rendering the view and send products array and page title
