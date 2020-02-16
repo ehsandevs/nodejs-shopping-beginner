@@ -5,6 +5,10 @@ const bodyParser = require('body-parser');
 //  Importing path to help give the path
 //  Because Nodejs counts path from root dir of pc not the project
 const path = require('path');
+
+const errorController = require('./controllers/error');
+const db = require('./util/database');
+
 // Running the Express app by adding Paranthasis: pexress()
 const app = express();
 
@@ -16,7 +20,13 @@ app.set('views', 'views');
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 
-const errorController = require('./controllers/error');
+// db.execute('SELECT * FROM products')
+//     .then(result => {
+//         console.log(result[0]);
+//     })
+//     .catch(err => {
+//         console.log(err);
+//     });
 
 // Parse incoming text from forms
 app.use(bodyParser.urlencoded({ extended: false }));
