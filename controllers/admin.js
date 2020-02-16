@@ -18,8 +18,12 @@ exports.postAddProduct = (req, res, next) => {
     // first argument is ID. 
     // That's telling the model, that we're Adding, not updating an existing product
     const product = new Product(null, title, imageUrl, price, description);
-    product.save();
-    res.redirect('/');
+
+    product.save()
+        .then(() => {
+            res.redirect('/');
+        })
+        .catch(err => { console.log(err) });
 };
 
 exports.getEditProduct = (req, res, next) => {
