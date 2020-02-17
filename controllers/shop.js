@@ -27,10 +27,22 @@ exports.getProducts = (req, res, next) => {
 
 exports.getProduct = (req, res, next) => {
     const paramId = req.params.productId;
-    Product.findById(paramId)
-        .then(([product]) => {
+    // Product.findAll({
+    //         where: { id: paramId }
+    //     })
+    //     .then(products => {
+    //         res.render('shop/product-detail', {
+    //             product: products[0],
+    //             pageTitle: products[0].title,
+    //             path: '/products'
+    //         });
+    //     })
+    //     .catch(err => console.log(err));
+
+    Product.findByPk(paramId)
+        .then(product => {
             res.render('shop/product-detail', {
-                product: product[0],
+                product: product,
                 pageTitle: product.title,
                 path: '/products'
             });
