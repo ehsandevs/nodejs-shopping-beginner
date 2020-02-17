@@ -7,7 +7,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 
 const errorController = require('./controllers/error');
-const db = require('./util/database');
+const sequelize = require('./util/database');
 
 // Running the Express app by adding Paranthasis: pexress()
 const app = express();
@@ -20,13 +20,6 @@ app.set('views', 'views');
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 
-// db.execute('SELECT * FROM products')
-//     .then(result => {
-//         console.log(result[0]);
-//     })
-//     .catch(err => {
-//         console.log(err);
-//     });
 
 // Parse incoming text from forms
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -40,5 +33,10 @@ app.use(shopRoutes);
 // middleware for wrong address
 app.use(errorController.get404);
 
-// for running server on localhost:3000
-app.listen(3000);
+sequelize.sync()
+    .then(result => {
+        // for running server on localhost:3000
+        console.log(result);
+        app.listen(3000);
+    })
+    .catch(err => { console.log(err) });

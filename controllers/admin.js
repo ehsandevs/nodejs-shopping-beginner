@@ -15,16 +15,20 @@ exports.postAddProduct = (req, res, next) => {
     const imageUrl = req.body.imageUrl;
     const price = req.body.price;
     const description = req.body.description;
-    // first argument is ID. 
-    // That's telling the model, that we're Adding, not updating an existing product
-    const product = new Product(null, title, imageUrl, price, description);
 
-    product.save()
-        .then(() => {
-            res.redirect('/');
+    Product.create({
+            title: title,
+            price: price,
+            imageUrl: imageUrl,
+            description: description
         })
-        .catch(err => { console.log(err) });
-};
+        .then(result => {
+            console.log('Created Product');
+        })
+        .catch(err => {
+            console.log(err);
+        });
+}
 
 exports.getEditProduct = (req, res, next) => {
     const editMode = req.query.edit;
