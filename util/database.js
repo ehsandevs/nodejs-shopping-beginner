@@ -1,12 +1,8 @@
-const mysql = require('mysql2');
+const Sequelize = require('sequelize');
 
-// Each query needs a sinqle connection to DB
-// pool provides multiple connections for multiple queries
-const pool = mysql.createPool({
-    host: 'localhost',
-    user: 'root',
-    database: 'node-complete',
-    password: '7731228'
+const sequelize = new Sequelize('node-complete', 'root', '7731228', {
+    dialect: 'mysql',
+    host: 'localhost'
 });
 
-module.exports = pool.promise();
+module.exports = sequelize;
