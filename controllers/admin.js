@@ -69,15 +69,18 @@ exports.postEditProduct = (req, res, next) => {
 }
 
 exports.getProducts = (req, res, next) => {
-    Product.fetchAll((products) => {
-        // rendering the view and send products array and page title
-        // " path: '/' " is for cheking and set active class to menu item 
-        res.render('admin/products', {
-            prods: products,
-            pageTitle: 'Admin Products',
-            path: '/admin/products'
-        });
-    });
+
+    Product.findAll()
+        .then(products => {
+            // rendering the view and send products array and page title
+            // " path: '/' " is for cheking and set active class to menu item 
+            res.render('admin/products', {
+                prods: products,
+                pageTitle: 'Admin Products',
+                path: '/admin/products'
+            });
+        })
+        .catch(err => console.log(err));
 }
 
 exports.postDeleteProduct = (req, res, next) => {
