@@ -37,8 +37,10 @@ exports.getEditProduct = (req, res, next) => {
         res.redirect('/');
     }
     const prodId = req.params.productId;
-    Product.findByPk(prodId)
-        .then(product => {
+
+    req.user.getProducts({ where: { id: prodId } })
+        .then(products => {
+            const product = products[0];
             if (!product) {
                 return res.redirect('/');
             }
@@ -78,7 +80,7 @@ exports.postEditProduct = (req, res, next) => {
 
 exports.getProducts = (req, res, next) => {
 
-    Product.findAll()
+    req.user.getProducts()
         .then(products => {
             // rendering the view and send products array and page title
             // " path: '/' " is for cheking and set active class to menu item 
