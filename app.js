@@ -8,6 +8,8 @@ const path = require('path');
 
 const errorController = require('./controllers/error');
 const sequelize = require('./util/database');
+const Product = require('./models/product');
+const User = require('./models/user');
 
 // Running the Express app by adding Paranthasis: pexress()
 const app = express();
@@ -33,6 +35,10 @@ app.use(shopRoutes);
 // middleware for wrong address
 app.use(errorController.get404);
 
+Product.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });
+User.hasMany(Product);
+
+// sequelize.sync({ force: true })
 sequelize.sync()
     .then(result => {
         // for running server on localhost:3000
