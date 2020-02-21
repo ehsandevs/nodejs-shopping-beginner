@@ -28,6 +28,15 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // making public directory accesible for static fils like css, images, etc.
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use((req, res, next) => {
+    User.findByPk(1)
+        .then(user => {
+            req.user = user;
+            next();
+        })
+        .catch(err => console.log(err));
+});
+
 // /admin is the path filtering, so every route in adminRouter, starts with /admin/...
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
@@ -41,8 +50,18 @@ User.hasMany(Product);
 // sequelize.sync({ force: true })
 sequelize.sync()
     .then(result => {
+        return User.findByPk(1);
+        // console.log(result);
+    })
+    .then(user => {
+        if (!user) {
+            return User.create({ name: 'Amir Ehsan', email: 'niamileo@gmail.com' });
+        }
+        return user;
+    })
+    .then(user => {
+        console.log(user);
         // for running server on localhost:3000
-        console.log(result);
         app.listen(3000);
     })
     .catch(err => { console.log(err) });
