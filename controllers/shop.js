@@ -77,17 +77,24 @@ exports.postCart = (req, res, next) => {
         })
         .then(products => {
             let product;
+            // first two IF satements are for checking the cart for existing similar product
             if (products.length > 0) {
                 product = products[0];
             }
             if (product) {
-                // ...
+                const oldQuantity = product.cartItem.quantity;
+                newQuantity = oldQuantity + 1;
+                return product;
             }
-            return Product.findByPk(prodId)
-                .then(product => {
-                    return fetchedCart.addProduct(product, { through: { quantity: newQuantity } });
-                })
-                .catch(err => console.log(err))
+            // if there was no product with simiar ID, we just add it from DB
+            return Product.findByPk(prodId);
+        })
+        .then(product => {
+            // It adds product, and if it exists,
+            // it just adds new quantity
+            return fetchedCart.addProduct(product, {
+                through: { quantity: newQuantity }
+            });
         })
         .then(() => {
             res.redirect('/cart');
