@@ -33,6 +33,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // making public directory accesible for static fils like css, images, etc.
 app.use(express.static(path.join(__dirname, 'public')));
 
+// This is topper from other Routes, which means, all routes can use it
 app.use((req, res, next) => {
     User.findByPk(1)
         .then(user => {

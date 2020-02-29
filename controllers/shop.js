@@ -3,10 +3,12 @@ const Product = require('../models/product');
 exports.getIndex = (req, res, next) => {
     Product.findAll()
         .then(products => {
+            const isLoggedIn = req.get('Cookie').split('=')[1];
             res.render('shop/index', {
                 prods: products,
                 pageTitle: 'Shop',
-                path: '/'
+                path: '/',
+                isAuthenticated: isLoggedIn
             });
         })
         .catch(err => { console.log(err) });
@@ -15,10 +17,12 @@ exports.getIndex = (req, res, next) => {
 exports.getProducts = (req, res, next) => {
     Product.findAll()
         .then(products => {
+            const isLoggedIn = req.get('Cookie').split('=')[1];
             res.render('shop/product-list', {
                 prods: products,
                 pageTitle: 'Shop',
-                path: '/products'
+                path: '/products',
+                isAuthenticated: isLoggedIn
             });
         })
         .catch(err => { console.log(err) });
@@ -40,10 +44,12 @@ exports.getProduct = (req, res, next) => {
 
     Product.findByPk(paramId)
         .then(product => {
+            const isLoggedIn = req.get('Cookie').split('=')[1];
             res.render('shop/product-detail', {
                 product: product,
                 pageTitle: product.title,
-                path: '/products'
+                path: '/products',
+                isAuthenticated: isLoggedIn
             });
         })
         .catch(err => { console.log(err) });
@@ -54,10 +60,12 @@ exports.getCart = (req, res, next) => {
         .then(cart => {
             return cart.getProducts()
                 .then(products => {
+                    const isLoggedIn = req.get('Cookie').split('=')[1];
                     res.render('shop/cart', {
                         path: '/cart',
                         pageTitle: 'Your Cart',
-                        products: products
+                        products: products,
+                        isAuthenticated: isLoggedIn
                     });
                 })
                 .catch(err => console.log(err));
@@ -146,10 +154,12 @@ exports.postOrder = (req, res, next) => {
 exports.getOrders = (req, res, next) => {
     req.user.getOrders({ include: ['products'] })
         .then(orders => {
+            const isLoggedIn = req.get('Cookie').split('=')[1];
             res.render('shop/orders', {
                 path: '/orders',
                 pageTitle: 'Your Orders',
-                orders: orders
+                orders: orders,
+                isAuthenticated: isLoggedIn
             });
         })
         .catch(err => console.log(err));
