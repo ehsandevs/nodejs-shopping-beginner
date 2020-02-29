@@ -25,6 +25,7 @@ app.set('views', 'views');
 // Importing routing files: admin.js and shop.js
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
+const authRoutes = require('./routes/auth');
 
 
 // Parse incoming text from forms
@@ -44,6 +45,7 @@ app.use((req, res, next) => {
 // /admin is the path filtering, so every route in adminRouter, starts with /admin/...
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
+app.use(authRoutes);
 
 // middleware for wrong address
 app.use(errorController.get404);
