@@ -3,7 +3,7 @@ const Product = require('../models/product');
 exports.getIndex = (req, res, next) => {
     Product.findAll()
         .then(products => {
-            const isLoggedIn = req.get('Cookie').split('=')[1];
+            const isLoggedIn = req.session.isLoggedIn;
             res.render('shop/index', {
                 prods: products,
                 pageTitle: 'Shop',
@@ -17,7 +17,7 @@ exports.getIndex = (req, res, next) => {
 exports.getProducts = (req, res, next) => {
     Product.findAll()
         .then(products => {
-            const isLoggedIn = req.get('Cookie').split('=')[1];
+            const isLoggedIn = req.session.isLoggedIn;
             res.render('shop/product-list', {
                 prods: products,
                 pageTitle: 'Shop',
@@ -44,7 +44,7 @@ exports.getProduct = (req, res, next) => {
 
     Product.findByPk(paramId)
         .then(product => {
-            const isLoggedIn = req.get('Cookie').split('=')[1];
+            const isLoggedIn = req.session.isLoggedIn;
             res.render('shop/product-detail', {
                 product: product,
                 pageTitle: product.title,
@@ -60,7 +60,7 @@ exports.getCart = (req, res, next) => {
         .then(cart => {
             return cart.getProducts()
                 .then(products => {
-                    const isLoggedIn = req.get('Cookie').split('=')[1];
+                    const isLoggedIn = req.session.isLoggedIn;
                     res.render('shop/cart', {
                         path: '/cart',
                         pageTitle: 'Your Cart',
@@ -154,7 +154,7 @@ exports.postOrder = (req, res, next) => {
 exports.getOrders = (req, res, next) => {
     req.user.getOrders({ include: ['products'] })
         .then(orders => {
-            const isLoggedIn = req.get('Cookie').split('=')[1];
+            const isLoggedIn = req.session.isLoggedIn;
             res.render('shop/orders', {
                 path: '/orders',
                 pageTitle: 'Your Orders',
