@@ -3,6 +3,10 @@ const express = require('express');
 // Importing body-parser, for parse incoming text from form fields
 const bodyParser = require('body-parser');
 const session = require('express-session');
+
+// initialize sequelize with session store
+const sequelizeStore = require('connect-session-sequelize')(session.Store);
+
 //  Importing path to help give the path
 //  Because Nodejs counts path from root dir of pc not the project
 const path = require('path');
@@ -34,7 +38,12 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // making public directory accesible for static fils like css, images, etc.
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(session({ secret: 'my secret', resave: false, saveUninitialized: false }));
+app.use(session({
+    secret: 'my secret',
+    store: new sequelizeStore({ db: sequelize }),
+    resave: false,
+    saveUninitialized: false
+}));
 
 // This is topper from other Routes, which means, all routes can use it
 app.use((req, res, next) => {
