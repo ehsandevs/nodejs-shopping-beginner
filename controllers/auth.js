@@ -7,6 +7,14 @@ exports.getLogin = (req, res, next) => {
     });
 }
 
+exports.getSignup = (req, res, next) => {
+    res.render('auth/signup', {
+        path: '/signup',
+        pageTitle: 'Signup',
+        isAuthenticated: false
+    });
+}
+
 exports.postLogin = (req, res, next) => {
     req.session.isLoggedIn = true;
     req.session.save((err) => {
@@ -20,4 +28,8 @@ exports.postLogout = (req, res, next) => {
         console.log(err);
         res.redirect('/');
     });
+}
+
+exports.PostSignup = (req, res, next) => {
+
 }
