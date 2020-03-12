@@ -19,11 +19,36 @@ exports.getSignup = (req, res, next) => {
 }
 
 exports.postLogin = (req, res, next) => {
-    req.session.isLoggedIn = true;
-    req.session.save((err) => {
-        console.log(err);
-        res.redirect('/');
-    });
+    const email = req.body.email;
+    const password = req.body.password;
+    // Checking email
+    User.findOne({
+            where: { email: email }
+        })
+        .then(user => {
+            if (!user) {
+                return res.redirect('/login');
+            }
+            // checking password
+            bcrypt.compare(password, user.password)
+                .then(doMatch => {
+                    // if Matches, save a session and login
+                    if (doMatch) {
+                        req.session.isLoggedIn = true;
+                        req.session.user = user;
+                        return req.session.save((err) => {
+                            console.log(err);
+                            res.redirect('/');
+                        });
+                    }
+                    // if password doesn't match, redirect to login page
+                    res.redirect('/login');
+                })
+                .catch(err => {
+                    console.log(err)
+                    res.redirect('/login');
+                });
+        })
 }
 
 exports.postLogout = (req, res, next) => {
