@@ -1,3 +1,4 @@
+const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 
 exports.getLogin = (req, res, next) => {
@@ -46,9 +47,13 @@ exports.PostSignup = (req, res, next) => {
             if (userDoc) {
                 return res.redirect('/signup');
             }
+            // This is Asynchronise, so it returns a middleware
+            return bcrypt.hash(password, 12);
+        })
+        .then(hashedPassword => {
             const user = new User({
                 email: email,
-                password: password
+                password: hashedPassword
             });
             return user.save();
         })
