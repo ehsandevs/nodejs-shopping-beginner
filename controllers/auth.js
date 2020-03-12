@@ -48,17 +48,17 @@ exports.PostSignup = (req, res, next) => {
                 return res.redirect('/signup');
             }
             // This is Asynchronise, so it returns a middleware
-            return bcrypt.hash(password, 12);
-        })
-        .then(hashedPassword => {
-            const user = new User({
-                email: email,
-                password: hashedPassword
-            });
-            return user.save();
-        })
-        .then(result => {
-            res.redirect('/login');
+            return bcrypt.hash(password, 12)
+                .then(hashedPassword => {
+                    const user = new User({
+                        email: email,
+                        password: hashedPassword
+                    });
+                    return user.save();
+                })
+                .then(result => {
+                    res.redirect('/login');
+                });
         })
         .catch(err => console.log(err));
 }
