@@ -64,6 +64,13 @@ app.use((req, res, next) => {
         .catch(err => console.log(err));
 });
 
+// locals is for local variable which passes into the views
+app.use((req, res, next) => {
+    res.locals.isAuthenticated = req.session.isLoggedIn;
+    res.locals.csrfToken = req.csrfToken();
+    next();
+});
+
 // /admin is the path filtering, so every route in adminRouter, starts with /admin/...
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
