@@ -16,10 +16,16 @@ exports.getLogin = (req, res, next) => {
 }
 
 exports.getSignup = (req, res, next) => {
+    let message = req.flash('error');
+    if (message.length > 0) {
+        message = message[0];
+    } else {
+        message = null;
+    }
     res.render('auth/signup', {
         path: '/signup',
         pageTitle: 'Signup',
-        isAuthenticated: false
+        errorMessage: message
     });
 }
 
@@ -48,6 +54,7 @@ exports.postLogin = (req, res, next) => {
                         });
                     }
                     // if password doesn't match, redirect to login page
+                    req.flash('error', 'Invalid Email or Password');
                     res.redirect('/login');
                 })
                 .catch(err => {
@@ -75,6 +82,7 @@ exports.PostSignup = (req, res, next) => {
         })
         .then(userDoc => {
             if (userDoc) {
+                req.flash('error', 'E-Mail already exists; please pick a different one.');
                 return res.redirect('/signup');
             }
             // This is Asynchronise, so it returns a middleware
