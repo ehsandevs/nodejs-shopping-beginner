@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 // Importing csurf package, for CSRF attacks
 const csrf = require('csurf');
+const flash = require('connect-flash');
 
 // initialize sequelize with session store
 const sequelizeStore = require('connect-session-sequelize')(session.Store);
@@ -53,6 +54,7 @@ app.use(session({
 // Using the csrf middleware
 // note that it should be after using session middleware
 app.use(csrfProtection);
+app.use(flash());
 
 // This is topper from other Routes, which means, all routes can use it
 app.use((req, res, next) => {
