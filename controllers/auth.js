@@ -2,11 +2,9 @@ const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 
 exports.getLogin = (req, res, next) => {
-    const isLoggedIn = req.session.isLoggedIn;
     res.render('auth/login', {
         path: '/login',
-        pageTitle: 'Login',
-        isAuthenticated: isLoggedIn
+        pageTitle: 'Login'
     });
 }
 
@@ -68,7 +66,6 @@ exports.PostSignup = (req, res, next) => {
             where: { email: email }
         })
         .then(userDoc => {
-            console.log(userDoc);
             if (userDoc) {
                 return res.redirect('/signup');
             }
@@ -82,7 +79,15 @@ exports.PostSignup = (req, res, next) => {
                     return user.save();
                 })
                 .then(result => {
-                    res.redirect('/login');
+                    // creating the cart for registered user
+                    User.findOne({ where: { id: result.id } })
+                        .then(user => {
+                            return user.createCart();
+                        })
+                        .then(result => {
+                            res.redirect('/login');
+                        })
+                        .catch(err => console.log(err));
                 });
         })
         .catch(err => console.log(err));
