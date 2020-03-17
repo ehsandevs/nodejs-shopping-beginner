@@ -1,14 +1,12 @@
 const Product = require('../models/product');
 
 exports.getAddProduct = (req, res, next) => {
-    const isLoggedIn = req.get('Cookie').split('=')[1];
     // rendering the view and send page title
     // " path: '/admin/edit-product' " is for cheking and set active class to menu item
     res.render('admin/edit-product', {
         pageTitle: 'Add Product',
         path: '/admin/add-product',
-        editing: false,
-        isAuthenticated: isLoggedIn
+        editing: false
     });
 };
 
@@ -46,15 +44,13 @@ exports.getEditProduct = (req, res, next) => {
             if (!product) {
                 return res.redirect('/');
             }
-            const isLoggedIn = req.get('Cookie').split('=')[1];
             // rendering the view and send page title
             // " path: '/admin/edit-product' " is for cheking and set active class to menu item
             res.render('admin/edit-product', {
                 pageTitle: 'edit Product',
                 path: '/admin/edit-product',
                 editing: editMode,
-                product: product,
-                isAuthenticated: isLoggedIn
+                product: product
             });
         })
         .catch(err => console.log(err));
@@ -86,14 +82,12 @@ exports.getProducts = (req, res, next) => {
 
     req.user.getProducts()
         .then(products => {
-            const isLoggedIn = req.get('Cookie').split('=')[1];
             // rendering the view and send products array and page title
             // " path: '/' " is for cheking and set active class to menu item 
             res.render('admin/products', {
                 prods: products,
                 pageTitle: 'Admin Products',
-                path: '/admin/products',
-                isAuthenticated: isLoggedIn
+                path: '/admin/products'
             });
         })
         .catch(err => console.log(err));

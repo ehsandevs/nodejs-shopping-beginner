@@ -56,7 +56,10 @@ app.use(csrfProtection);
 
 // This is topper from other Routes, which means, all routes can use it
 app.use((req, res, next) => {
-    User.findByPk(1)
+    if (!req.session.user) {
+        return next();
+    }
+    User.findByPk(req.session.user.id)
         .then(user => {
             req.user = user;
             next();
@@ -92,7 +95,7 @@ Order.belongsToMany(Product, { through: OrderItem });
 
 // sequelize.sync({ force: true })
 sequelize.sync()
-    .then(result => {
+    .then(cart => {
         // for running server on localhost:3000
         app.listen(3000);
     })

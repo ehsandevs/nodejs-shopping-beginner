@@ -3,12 +3,10 @@ const Product = require('../models/product');
 exports.getIndex = (req, res, next) => {
     Product.findAll()
         .then(products => {
-            const isLoggedIn = req.session.isLoggedIn;
             res.render('shop/index', {
                 prods: products,
                 pageTitle: 'Shop',
-                path: '/',
-                isAuthenticated: isLoggedIn
+                path: '/'
             });
         })
         .catch(err => { console.log(err) });
@@ -17,12 +15,10 @@ exports.getIndex = (req, res, next) => {
 exports.getProducts = (req, res, next) => {
     Product.findAll()
         .then(products => {
-            const isLoggedIn = req.session.isLoggedIn;
             res.render('shop/product-list', {
                 prods: products,
                 pageTitle: 'Shop',
-                path: '/products',
-                isAuthenticated: isLoggedIn
+                path: '/products'
             });
         })
         .catch(err => { console.log(err) });
@@ -30,42 +26,27 @@ exports.getProducts = (req, res, next) => {
 
 exports.getProduct = (req, res, next) => {
     const paramId = req.params.productId;
-    // Product.findAll({
-    //         where: { id: paramId }
-    //     })
-    //     .then(products => {
-    //         res.render('shop/product-detail', {
-    //             product: products[0],
-    //             pageTitle: products[0].title,
-    //             path: '/products'
-    //         });
-    //     })
-    //     .catch(err => console.log(err));
 
     Product.findByPk(paramId)
         .then(product => {
-            const isLoggedIn = req.session.isLoggedIn;
             res.render('shop/product-detail', {
                 product: product,
                 pageTitle: product.title,
-                path: '/products',
-                isAuthenticated: isLoggedIn
+                path: '/products'
             });
         })
         .catch(err => { console.log(err) });
 }
 
 exports.getCart = (req, res, next) => {
-    req.user.getCart()
+    req.user.getCart({ include: ['products'] })
         .then(cart => {
             return cart.getProducts()
                 .then(products => {
-                    const isLoggedIn = req.session.isLoggedIn;
                     res.render('shop/cart', {
                         path: '/cart',
                         pageTitle: 'Your Cart',
-                        products: products,
-                        isAuthenticated: isLoggedIn
+                        products: products
                     });
                 })
                 .catch(err => console.log(err));
@@ -154,12 +135,10 @@ exports.postOrder = (req, res, next) => {
 exports.getOrders = (req, res, next) => {
     req.user.getOrders({ include: ['products'] })
         .then(orders => {
-            const isLoggedIn = req.session.isLoggedIn;
             res.render('shop/orders', {
                 path: '/orders',
                 pageTitle: 'Your Orders',
-                orders: orders,
-                isAuthenticated: isLoggedIn
+                orders: orders
             });
         })
         .catch(err => console.log(err));
