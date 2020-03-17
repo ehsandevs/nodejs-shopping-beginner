@@ -3,6 +3,8 @@ const express = require('express');
 // Importing body-parser, for parse incoming text from form fields
 const bodyParser = require('body-parser');
 const session = require('express-session');
+// Importing csurf package, for CSRF attacks
+const csrf = require('csurf');
 
 // initialize sequelize with session store
 const sequelizeStore = require('connect-session-sequelize')(session.Store);
@@ -22,6 +24,9 @@ const OrderItem = require('./models/order-item');
 
 // Running the Express app by adding Paranthasis: pexress()
 const app = express();
+
+// csrf middleware
+const csrfProtection = csrf();
 
 // Usings EJS view engine, and telling it to look for views in views directory
 app.set('view engine', 'ejs');
@@ -44,6 +49,10 @@ app.use(session({
     resave: false,
     saveUninitialized: false
 }));
+
+// Using the csrf middleware
+// note that it should be after using session middleware
+app.use(csrfProtection);
 
 // This is topper from other Routes, which means, all routes can use it
 app.use((req, res, next) => {
