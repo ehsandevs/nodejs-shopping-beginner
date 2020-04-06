@@ -7,7 +7,7 @@ const transport = nodemailer.createTransport({
     service: 'gmail',
     auth: {
         user: 'niamileo@gmail.com',
-        pass: '**********'
+        pass: '23472875'
     }
 });
 
@@ -173,4 +173,34 @@ exports.postReset = (req, res, next) => {
             })
             .catch(err => console.log(err));
     });
+}
+
+exports.getNewPassword = (req, res, next) => {
+    const token = req.params.token;
+    User.findOne({
+            where: {
+                resetToken: token
+            }
+        })
+        .then(user => {
+            // check resetToken Expiration Date
+            if (user.resetTokenExpiration < new Date(Date.now())) {
+                req.flash('error', 'Link is expired. Request a new one');
+                return res.redirect('/reset');
+            }
+            // if Token is still valid, continue...
+            let message = req.flash('error');
+            if (message.length > 0) {
+                message = message[0];
+            } else {
+                message = null;
+            }
+            res.render('auth/new-password', {
+                path: '/new-password',
+                pageTitle: 'New Password',
+                errorMessage: message,
+                userId: user.id.toString()
+            });
+        })
+        .catch(err => console.log(err));
 }
