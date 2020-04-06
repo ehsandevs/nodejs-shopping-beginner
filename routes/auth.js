@@ -19,3 +19,4 @@ router.post('/login', authController.postLogin);
 router.post('/logout', authController.postLogout);
 router.post('/signup', authController.PostSignup);
 router.post('/reset', authController.postReset);
+router.post('/new-password', authController.postNewPassword);
