@@ -85,7 +85,6 @@ exports.postLogout = (req, res, next) => {
 exports.PostSignup = (req, res, next) => {
     const email = req.body.email;
     const password = req.body.password;
-    const confirmPassword = req.body.confirmPassword;
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(422).render('auth/signup', {
@@ -95,44 +94,33 @@ exports.PostSignup = (req, res, next) => {
         });
     }
 
-    // Check if the entered email already exists in DB
-    User.findOne({
-            where: { email: email }
+    // This is Asynchronise, so it returns a middleware
+    bcrypt.hash(password, 12)
+        .then(hashedPassword => {
+            const user = new User({
+                email: email,
+                password: hashedPassword
+            });
+            return user.save();
         })
-        .then(userDoc => {
-            if (userDoc) {
-                req.flash('error', 'E-Mail already exists; please pick a different one.');
-                return res.redirect('/signup');
-            }
-            // This is Asynchronise, so it returns a middleware
-            return bcrypt.hash(password, 12)
-                .then(hashedPassword => {
-                    const user = new User({
-                        email: email,
-                        password: hashedPassword
-                    });
-                    return user.save();
+        .then(result => {
+            // creating the cart for registered user
+            User.findOne({ where: { id: result.id } })
+                .then(user => {
+                    return user.createCart();
                 })
                 .then(result => {
-                    // creating the cart for registered user
-                    User.findOne({ where: { id: result.id } })
-                        .then(user => {
-                            return user.createCart();
-                        })
-                        .then(result => {
-                            res.redirect('/login');
-                            // Sending Email to newly signed-up user
-                            return transport.sendMail({
-                                to: email,
-                                from: 'niamileo@gmail.com',
-                                subject: 'Signedup Successfully!',
-                                html: '<h1>You Registers successfuly!</h1>'
-                            });
-                        })
-                        .catch(err => console.log(err));
-                });
-        })
-        .catch(err => console.log(err));
+                    res.redirect('/login');
+                    // Sending Email to newly signed-up user
+                    return transport.sendMail({
+                        to: email,
+                        from: 'niamileo@gmail.com',
+                        subject: 'Signedup Successfully!',
+                        html: '<h1>You Registers successfuly!</h1>'
+                    });
+                })
+                .catch(err => console.log(err));
+        });
 }
 
 exports.getReset = (req, res, next) => {

@@ -10,6 +10,8 @@ const router = express.Router();
 // Importing Validation package
 const { check, body } = require('express-validator/check');
 
+const User = require('../models/user');
+
 module.exports = router;
 
 // Middlewares ...
@@ -25,10 +27,14 @@ router.post('/signup', [
     .isEmail()
     .withMessage('Please enter a valid email!')
     .custom((value, { req }) => {
-        if (value === 'test@test.com') {
-            throw new Error('this email address is forbidden');
-        }
-        return true;
+        return User.findOne({
+                where: { email: value }
+            })
+            .then(userDoc => {
+                if (userDoc) {
+                    return Promise.reject('E-Mail exists already; please pick a different one');
+                }
+            });
     }),
     body(
         'password',
