@@ -22,7 +22,9 @@ exports.getLogin = (req, res, next) => {
     res.render('auth/login', {
         path: '/login',
         pageTitle: 'Login',
-        errorMessage: message
+        errorMessage: message,
+        oldInput: { email: '', password: '' },
+        validationErrors: []
     });
 }
 
@@ -45,14 +47,30 @@ exports.getSignup = (req, res, next) => {
 exports.postLogin = (req, res, next) => {
     const email = req.body.email;
     const password = req.body.password;
+
+    const error = validationResult(req);
+    if (!error.isEmpty()) {
+        return res.status(422).render('auth/login', {
+            path: '/login',
+            pageTitle: 'Login',
+            errorMessage: error.array()[0].msg,
+            oldInput: { email: email, password: password },
+            validationErrors: errors.array()
+        });
+    }
     // Checking email
     User.findOne({
             where: { email: email }
         })
         .then(user => {
             if (!user) {
-                req.flash('error', 'Invalid Email or Password');
-                return res.redirect('/login');
+                return res.status(422).render('auth/login', {
+                    path: '/login',
+                    pageTitle: 'Login',
+                    errorMessage: 'Invalid Email or Password',
+                    oldInput: { email: email, password: password },
+                    validationErrors: []
+                });
             }
             // checking password
             bcrypt.compare(password, user.password)
@@ -67,8 +85,13 @@ exports.postLogin = (req, res, next) => {
                         });
                     }
                     // if password doesn't match, redirect to login page
-                    req.flash('error', 'Invalid Email or Password');
-                    res.redirect('/login');
+                    return res.status(422).render('auth/login', {
+                        path: '/login',
+                        pageTitle: 'Login',
+                        errorMessage: 'Invalid Email or Password',
+                        oldInput: { email: email, password: password },
+                        validationErrors: []
+                    });
                 })
                 .catch(err => {
                     console.log(err)
