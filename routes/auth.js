@@ -7,6 +7,9 @@ const authController = require('../controllers/auth');
 // Initialize and run this file as a Router because of ()
 const router = express.Router();
 
+// Importing Validation package
+const { check } = require('express-validator/check');
+
 module.exports = router;
 
 // Middlewares ...
@@ -17,6 +20,14 @@ router.get('/reset/:token', authController.getNewPassword);
 
 router.post('/login', authController.postLogin);
 router.post('/logout', authController.postLogout);
-router.post('/signup', authController.PostSignup);
+router.post('/signup', check('email')
+    .isEmail()
+    .withMessage('Please enter a valid email!')
+    .custom((value, { req }) => {
+        if (value === 'test@test.com') {
+            throw new Error('this email address is forbidden');
+        }
+        return true;
+    }), authController.PostSignup);
 router.post('/reset', authController.postReset);
 router.post('/new-password', authController.postNewPassword);
