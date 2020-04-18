@@ -8,7 +8,7 @@ const authController = require('../controllers/auth');
 const router = express.Router();
 
 // Importing Validation package
-const { check } = require('express-validator/check');
+const { check, body } = require('express-validator/check');
 
 module.exports = router;
 
@@ -20,7 +20,8 @@ router.get('/reset/:token', authController.getNewPassword);
 
 router.post('/login', authController.postLogin);
 router.post('/logout', authController.postLogout);
-router.post('/signup', check('email')
+router.post('/signup', [
+    check('email')
     .isEmail()
     .withMessage('Please enter a valid email!')
     .custom((value, { req }) => {
@@ -28,6 +29,13 @@ router.post('/signup', check('email')
             throw new Error('this email address is forbidden');
         }
         return true;
-    }), authController.PostSignup);
+    }),
+    body(
+        'password',
+        'Please enter a password with only numbers and text and at least 5 characters'
+    )
+    .isLength({ min: 5 })
+    .isAlphanumeric()
+], authController.PostSignup);
 router.post('/reset', authController.postReset);
 router.post('/new-password', authController.postNewPassword);
