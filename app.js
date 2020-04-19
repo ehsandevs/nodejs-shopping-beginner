@@ -56,6 +56,13 @@ app.use(session({
 app.use(csrfProtection);
 app.use(flash());
 
+// locals is for local variable which passes into the views
+app.use((req, res, next) => {
+    res.locals.isAuthenticated = req.session.isLoggedIn;
+    res.locals.csrfToken = req.csrfToken();
+    next();
+});
+
 // This is topper from other Routes, which means, all routes can use it
 app.use((req, res, next) => {
     if (!req.session.user) {
@@ -70,15 +77,8 @@ app.use((req, res, next) => {
             next();
         })
         .catch(err => {
-            throw new Error(err);
+            next(new Error(err));
         });
-});
-
-// locals is for local variable which passes into the views
-app.use((req, res, next) => {
-    res.locals.isAuthenticated = req.session.isLoggedIn;
-    res.locals.csrfToken = req.csrfToken();
-    next();
 });
 
 // /admin is the path filtering, so every route in adminRouter, starts with /admin/...
