@@ -91,6 +91,11 @@ app.use('/500', errorController.get500);
 // middleware for wrong address
 app.use(errorController.get404);
 
+// Error Handling middleware
+app.use((error, req, res, next) => {
+    res.redirect('/500');
+})
+
 // Tables Associations
 Product.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });
 User.hasMany(Product); // Optional
