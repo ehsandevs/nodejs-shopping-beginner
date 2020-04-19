@@ -86,6 +86,8 @@ app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
 
+app.use('/500', errorController.get500);
+
 // middleware for wrong address
 app.use(errorController.get404);
 
