@@ -63,10 +63,15 @@ app.use((req, res, next) => {
     }
     User.findByPk(req.session.user.id)
         .then(user => {
+            if (!user) {
+                return next();
+            }
             req.user = user;
             next();
         })
-        .catch(err => console.log(err));
+        .catch(err => {
+            throw new Error(err);
+        });
 });
 
 // locals is for local variable which passes into the views
@@ -101,4 +106,4 @@ sequelize.sync()
         // for running server on localhost:3000
         app.listen(3000);
     })
-    .catch(err => { console.log(err) });
+    .catch(err => console.log(err));
