@@ -12,7 +12,7 @@
                         <%= errorMessage %>
                     </div>
                     <% } %>
-                        <form class="product-form" action="/admin/<% if(editing){ %>edit-Product<% } else { %>Add-Product<% } %>" method="POST">
+                        <form class="product-form" action="/admin/<% if(editing){ %>edit-Product<% } else { %>Add-Product<% } %>" method="POST" enctype="multipart/form-data">
                             <div class="form-control">
                                 <label for="title">Title</label>
                                 <input class="<%= validationErrors.find(e => e.param === 'title') ? 'invalid' : '' %>" type="text" name="title" id="title" value="<% if(editing || hasError){ %><%= product.title %><% }%>">
