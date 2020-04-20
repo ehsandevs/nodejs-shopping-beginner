@@ -109,7 +109,7 @@ exports.postEditProduct = (req, res, next) => {
     const prodId = req.body.productId;
     const updatedTitle = req.body.title;
     const updatedPrice = req.body.price;
-    const updatedImageUrl = req.body.imageUrl;
+    const image = req.file;
     const updatedDesc = req.body.description;
     const errors = validationResult(req);
 
@@ -137,7 +137,9 @@ exports.postEditProduct = (req, res, next) => {
             }
             product.title = updatedTitle;
             product.price = updatedPrice;
-            product.imageUrl = updatedImageUrl;
+            if (image) {
+                product.imageUrl = image.path;
+            }
             product.description = updatedDesc;
             return product.save()
                 .then(result => {
