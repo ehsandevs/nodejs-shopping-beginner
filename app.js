@@ -30,6 +30,17 @@ const app = express();
 
 // csrf middleware
 const csrfProtection = csrf();
+// Handling the name and location of incoming file
+const fileStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        // 'images' refers to folder which images will be store in
+        cb(null, 'images');
+    },
+    filename: (req, file, cb) => {
+        // 'file.original name' comes at last to ensure that extension will be
+        cb(null, "localhost" + "-" + file.originalname);
+    }
+});
 
 // Usings EJS view engine, and telling it to look for views in views directory
 app.set('view engine', 'ejs');
@@ -44,7 +55,7 @@ const authRoutes = require('./routes/auth');
 // Parse incoming text from forms
 app.use(bodyParser.urlencoded({ extended: false }));
 // Parse incoming image from forms
-app.use(multer({ dest: 'images' }).single('image'));
+app.use(multer({ storage: fileStorage }).single('image'));
 // making public directory accesible for static fils like css, images, etc.
 app.use(express.static(path.join(__dirname, 'public')));
 
