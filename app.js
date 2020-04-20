@@ -42,6 +42,14 @@ const fileStorage = multer.diskStorage({
     }
 });
 
+const fileFilter = (req, file, cb) => {
+    if (file.mimetype === 'image/png' || file.mimetype === 'image/jpg' || file.mimetype === 'image/jpeg') {
+        cb(null, true);
+    } else {
+        cb(null, false);
+    }
+}
+
 // Usings EJS view engine, and telling it to look for views in views directory
 app.set('view engine', 'ejs');
 app.set('views', 'views');
@@ -55,7 +63,7 @@ const authRoutes = require('./routes/auth');
 // Parse incoming text from forms
 app.use(bodyParser.urlencoded({ extended: false }));
 // Parse incoming image from forms
-app.use(multer({ storage: fileStorage }).single('image'));
+app.use(multer({ storage: fileStorage, fileFilter: fileFilter }).single('image'));
 // making public directory accesible for static fils like css, images, etc.
 app.use(express.static(path.join(__dirname, 'public')));
 
