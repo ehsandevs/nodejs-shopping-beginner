@@ -6,6 +6,8 @@ const session = require('express-session');
 // Importing csurf package, for CSRF attacks
 const csrf = require('csurf');
 const flash = require('connect-flash');
+// Importing multer for handling multipart forms (text,file ...)
+const multer = require('multer');
 
 // initialize sequelize with session store
 const sequelizeStore = require('connect-session-sequelize')(session.Store);
@@ -41,6 +43,8 @@ const authRoutes = require('./routes/auth');
 
 // Parse incoming text from forms
 app.use(bodyParser.urlencoded({ extended: false }));
+// Parse incoming image from forms
+app.use(multer({ dest: 'images' }).single('image'));
 // making public directory accesible for static fils like css, images, etc.
 app.use(express.static(path.join(__dirname, 'public')));
 
