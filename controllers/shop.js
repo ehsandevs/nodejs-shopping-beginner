@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const pdfDocument = require('pdfkit');
 const Product = require('../models/product');
 const Order = require('../models/order');
 
@@ -196,6 +197,18 @@ exports.getInvoice = (req, res, next) => {
         // only if passed these 2 checks, it may download the invoice
         const invoiceName = 'invoice-' + orderId + '.pdf';
         const invoicePath = path.join('data', 'invoices', invoiceName);
+
+        pdfDoc = new pdfDocument();
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', 'attachment; filename="' + invoiceName + '"');
+
+        // That saves in our server
+        pdfDoc.pipe(fs.createWriteStream(invoicePath));
+        // That is given to the user
+        pdfDoc.pipe(res);
+
+        pdfDoc.text('How you doing?');
+        pdfDoc.end();
         // fs.readFile(invoicePath, (err, data) => {
         //     if (err) {
         //         return next(err);
@@ -206,10 +219,5 @@ exports.getInvoice = (req, res, next) => {
         // });
 
         // Straming data instead of preloading it
-        const file = fs.createReadStream(invoicePath);
-        res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition', 'attachment; filename="' + invoiceName + '"');
-        file.pipe(res);
-
     }).catch(err => next(err));
 }
