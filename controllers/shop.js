@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const Product = require('../models/product');
+const Order = require('../models/order');
 
 exports.getIndex = (req, res, next) => {
     Product.findAll()
@@ -184,14 +185,24 @@ exports.getOrders = (req, res, next) => {
 
 exports.getInvoice = (req, res, next) => {
     const orderId = req.params.orderId;
-    const invoiceName = 'invoice-' + orderId + '.pdf';
-    const invoicePath = path.join('data', 'invoices', invoiceName);
-    fs.readFile(invoicePath, (err, data) => {
-        if (err) {
-            return next(err);
+
+    Order.findByPk(orderId).then(order => {
+        if (!order) {
+            return next(new Error('No order found!'));
         }
-        res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition', 'attachment; filename="' + invoiceName + '"');
-        res.send(data);
-    });
+        if (order.userId.toString() !== req.user.id.toString()) {
+            return next(new Error('Unauthorized!'));
+        }
+        // only if passed these 2 checks, it may download the invoice
+        const invoiceName = 'invoice-' + orderId + '.pdf';
+        const invoicePath = path.join('data', 'invoices', invoiceName);
+        fs.readFile(invoicePath, (err, data) => {
+            if (err) {
+                return next(err);
+            }
+            res.setHeader('Content-Type', 'application/pdf');
+            res.setHeader('Content-Disposition', 'attachment; filename="' + invoiceName + '"');
+            res.send(data);
+        });
+    }).catch(err => next(err));
 }
