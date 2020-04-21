@@ -196,13 +196,20 @@ exports.getInvoice = (req, res, next) => {
         // only if passed these 2 checks, it may download the invoice
         const invoiceName = 'invoice-' + orderId + '.pdf';
         const invoicePath = path.join('data', 'invoices', invoiceName);
-        fs.readFile(invoicePath, (err, data) => {
-            if (err) {
-                return next(err);
-            }
-            res.setHeader('Content-Type', 'application/pdf');
-            res.setHeader('Content-Disposition', 'attachment; filename="' + invoiceName + '"');
-            res.send(data);
-        });
+        // fs.readFile(invoicePath, (err, data) => {
+        //     if (err) {
+        //         return next(err);
+        //     }
+        //     res.setHeader('Content-Type', 'application/pdf');
+        //     res.setHeader('Content-Disposition', 'attachment; filename="' + invoiceName + '"');
+        //     res.send(data);
+        // });
+
+        // Straming data instead of preloading it
+        const file = fs.createReadStream(invoicePath);
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', 'attachment; filename="' + invoiceName + '"');
+        file.pipe(res);
+
     }).catch(err => next(err));
 }
