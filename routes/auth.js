@@ -23,8 +23,7 @@ router.get('/reset/:token', authController.getNewPassword);
 router.post('/login', [
     body('email')
     .isEmail()
-    .withMessage('Please enter a valid email number.')
-    .normalizeEmail(),
+    .withMessage('Please enter a valid email number.'),
     body('password', 'password has to be valid.')
     .isLength({ min: 5 })
     .isAlphanumeric()
@@ -44,8 +43,7 @@ router.post('/signup', [
                     return Promise.reject('E-Mail exists already; please pick a different one');
                 }
             });
-    })
-    .normalizeEmail(),
+    }),
     body(
         'password',
         'Please enter a password with only numbers and text and at least 5 characters'
