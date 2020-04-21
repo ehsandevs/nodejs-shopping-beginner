@@ -187,37 +187,57 @@ exports.getOrders = (req, res, next) => {
 exports.getInvoice = (req, res, next) => {
     const orderId = req.params.orderId;
 
-    Order.findByPk(orderId).then(order => {
-        if (!order) {
-            return next(new Error('No order found!'));
-        }
-        if (order.userId.toString() !== req.user.id.toString()) {
-            return next(new Error('Unauthorized!'));
-        }
-        // only if passed these 2 checks, it may download the invoice
-        const invoiceName = 'invoice-' + orderId + '.pdf';
-        const invoicePath = path.join('data', 'invoices', invoiceName);
+    Order.findByPk(orderId, {
+            include: ['products']
+        })
+        .then(order => {
+            if (!order) {
+                return next(new Error('No order found!'));
+            }
+            if (order.userId.toString() !== req.user.id.toString()) {
+                return next(new Error('Unauthorized!'));
+            }
+            // only if passed these 2 checks, it may download the invoice
+            const invoiceName = 'invoice-' + orderId + '.pdf';
+            const invoicePath = path.join('data', 'invoices', invoiceName);
 
-        pdfDoc = new pdfDocument();
-        res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition', 'attachment; filename="' + invoiceName + '"');
+            pdfDoc = new pdfDocument();
+            res.setHeader('Content-Type', 'application/pdf');
+            res.setHeader('Content-Disposition', 'attachment; filename="' + invoiceName + '"');
 
-        // That saves in our server
-        pdfDoc.pipe(fs.createWriteStream(invoicePath));
-        // That is given to the user
-        pdfDoc.pipe(res);
+            // That saves in our server
+            pdfDoc.pipe(fs.createWriteStream(invoicePath));
+            // That is given to the user
+            pdfDoc.pipe(res);
 
-        pdfDoc.text('How you doing?');
-        pdfDoc.end();
-        // fs.readFile(invoicePath, (err, data) => {
-        //     if (err) {
-        //         return next(err);
-        //     }
-        //     res.setHeader('Content-Type', 'application/pdf');
-        //     res.setHeader('Content-Disposition', 'attachment; filename="' + invoiceName + '"');
-        //     res.send(data);
-        // });
+            pdfDoc.fontSize(26).text('Invoice', { underline: true });
+            pdfDoc.text('------------------------------');
+            let totalPrice = 0;
 
-        // Straming data instead of preloading it
-    }).catch(err => next(err));
+            order.products.forEach(prod => {
+                totalPrice += prod.orderItem.quantity * prod.price;
+                pdfDoc.fontSize(14).text(
+                    prod.title +
+                    ' - ' +
+                    prod.orderItem.quantity +
+                    ' x ' +
+                    '$' +
+                    prod.price
+                );
+            });
+            pdfDoc.text('------------------------------');
+            pdfDoc.fontSize(20).text('Total Price: $' + totalPrice);
+
+            pdfDoc.end();
+            // fs.readFile(invoicePath, (err, data) => {
+            //     if (err) {
+            //         return next(err);
+            //     }
+            //     res.setHeader('Content-Type', 'application/pdf');
+            //     res.setHeader('Content-Disposition', 'attachment; filename="' + invoiceName + '"');
+            //     res.send(data);
+            // });
+
+            // Straming data instead of preloading it
+        }).catch(err => next(err));
 }
