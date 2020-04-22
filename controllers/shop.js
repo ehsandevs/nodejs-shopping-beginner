@@ -7,17 +7,31 @@ const Order = require('../models/order');
 const ITEMS_PER_PAGE = 2;
 
 exports.getIndex = (req, res, next) => {
-    const page = req.query.page;
+    // Plus is to make sure it's a number
+    // so page + 1, won't be i.e 11 -- LOL
+    // || is to make sure first page always loads on default
+    const page = +req.query.page || 1;
+    let totalItems;
 
-    Product.findAll({
-            limit: 2,
-            offset: ((page - 1) * ITEMS_PER_PAGE)
+    Product.count()
+        .then(numProducts => {
+            totalItems = numProducts;
+            return Product.findAll({
+                limit: ITEMS_PER_PAGE,
+                offset: ((page - 1) * ITEMS_PER_PAGE)
+            });
         })
         .then(products => {
             res.render('shop/index', {
                 prods: products,
                 pageTitle: 'Shop',
-                path: '/'
+                path: '/',
+                currentPage: page,
+                hasNextPage: ITEMS_PER_PAGE * page < totalItems,
+                hasPreviousPage: page > 1,
+                nextPage: page + 1,
+                previousPage: page - 1,
+                lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE)
             });
         })
         .catch(err => {
